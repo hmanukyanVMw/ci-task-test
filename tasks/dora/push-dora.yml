@@ -3,6 +3,8 @@ platform: linux
 
 inputs:
   - name: ci-task-test
+  - name: dora-src
+  - name: ci-docker
 
 run: 
   path: ci-task-test/tasks/dora/task.sh
