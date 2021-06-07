@@ -1,16 +1,16 @@
 ---
 platform: linux
 
-  run: 
-    path: ci-task-test/tasks/dora/task
-    
-  params:
-    CF_USERNAME:
-    CF_PASSWORD:
-    SYSTEM_DOMAIN:
-    
-  inputs:
-    - name: dora-src
+run: 
+  path: ci-task-test/tasks/dora/task
+
+params:
+  CF_USERNAME:
+  CF_PASSWORD:
+  SYSTEM_DOMAIN:
+
+inputs:
+  - name: dora-src
 
 
 
