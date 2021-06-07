@@ -2,7 +2,7 @@
 platform: linux
 
 run: 
-  path: ci-task-test/tasks/dora/task
+  path: tasks/dora/task
 
 params:
   CF_USERNAME:
