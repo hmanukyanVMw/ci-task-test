@@ -2,7 +2,7 @@
 platform: linux
 
 run: 
-  path: task.sh
+  path: ${PWD}/task.sh
 
 params:
   CF_USERNAME:
