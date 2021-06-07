@@ -1,0 +1,9 @@
+---
+platform: linux
+  run: /Users/hmanukyan/workspace/catalyst/aConcurse/tasks/dora/task
+  params:
+    CF_USERNAME:
+    CF_PASSWORD:
+    SYSTEM_DOMAIN:
+  inputs:
+    - name: dora-src
