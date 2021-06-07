@@ -1,7 +1,7 @@
 ---
 
 platform: linux
-  run: ci-task-test/tasks/dora/task
+  run: tasks/dora/task
   params:
     CF_USERNAME:
     CF_PASSWORD:
