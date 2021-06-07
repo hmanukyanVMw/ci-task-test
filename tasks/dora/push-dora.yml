@@ -1,6 +1,7 @@
 ---
+
 platform: linux
-  run: /Users/hmanukyan/workspace/catalyst/aConcurse/tasks/dora/task
+  run: ci-task-test/tasks/dora/task
   params:
     CF_USERNAME:
     CF_PASSWORD:
