@@ -10,4 +10,4 @@ params:
   SYSTEM_DOMAIN:
 
 inputs:
-  - name: dora-src
+  - name: ci-task-test
