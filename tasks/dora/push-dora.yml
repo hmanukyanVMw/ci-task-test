@@ -2,7 +2,7 @@
 platform: linux
 
 run: 
-  path: ci-task-test/tasks/dora/task
+  path: ci-task-test/tasks/dora/task.sh
 
 params:
   CF_USERNAME:
@@ -11,6 +11,3 @@ params:
 
 inputs:
   - name: dora-src
-
-
-
