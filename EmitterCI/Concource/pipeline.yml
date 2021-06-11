@@ -7,22 +7,28 @@ resources:
 - name: loggregator-tools
   type: git
   source:
+    uri: https://github.com/hmanukyanVMw/ci-task-test.git
     branch: master
-    uri: https://github.com/hmanukyanVMw/ci-task-test/tree/master/EmitterCI
-
-- name: loggregator-ci
+    paths:
+      - EmitterCI
+  check_every: 5m
+- name: ci-task-test
   type: git
   source:
-    uri: https://github.com/hmanukyanVMw/ci-task-test/tree/master/EmitterCI
+    uri: https://github.com/hmanukyanVMw/ci-task-test.git
     branch: master
+    paths:
+      - EmitterCI
+  check_every: 5m
 
 - name: emitter-image-docker-build-context
   type: git
   source:
-    uri: https://github.com/hmanukyanVMw/ci-task-test/tree/master/EmitterCI
+    uri: https://github.com/hmanukyanVMw/ci-task-test.git
     branch: master
     paths:
-    - docker-images/emitter
+      - EmitterCI/docker-images/emitter
+    check_every: 5m
 
 - name: emitter-image
   type: docker-image
@@ -39,7 +45,7 @@ jobs:
       trigger: true
     - get: loggregator-tools
       trigger: true
-    - get: loggregator-ci
+    - get: ci-task-test
   - task: build-image
     file: ci-task-test/EmitterCI/build-go-docker-image/task.yml
     input_mapping:
