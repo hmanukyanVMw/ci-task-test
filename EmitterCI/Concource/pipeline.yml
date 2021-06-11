@@ -1,0 +1,70 @@
+groups:
+- name: concourse
+  jobs:
+  - build-base-image
+
+- name: tools
+  jobs:
+  - emitter
+
+resources:
+- name: loggregator-tools
+  type: git
+  source:
+    branch: master
+    uri: https://github.com/hmanukyanVMw/ci-task-test/EmitterCI
+
+- name: base-image
+  type: docker-image
+  source:
+    repository: loggregator/base
+    username: hmanukyan
+    password: DocVMwdeno_!9Hms^
+
+- name: loggregator-ci
+  type: git
+  source:
+    uri: https://github.com/hmanukyanVMw/ci-task-test/EmitterCI
+    branch: master
+
+- name: emitter-image-docker-build-context
+  type: git
+  source:
+    uri: https://github.com/cloudfoundry/loggregator-ci/EmitterCI
+    branch: master
+    paths:
+    - docker-images/emitter
+
+- name: emitter-image
+  type: docker-image
+  source:
+    repository: loggregator/emitter
+    username: hmanukyan
+    password: DocVMwdeno_!9Hms^
+
+jobs:
+- name: emitter
+  plan:
+  - in_parallel:
+    - get: emitter-image-docker-build-context
+      trigger: true
+    - get: loggregator-tools
+      trigger: true
+    - get: loggregator-ci
+  - task: build-image
+    file: ci-task-test/EmitterCI/build-go-docker-image/task.yml
+    input_mapping:
+      context-repo: emitter-image-docker-build-context
+      source-repo: loggregator-tools
+    params:
+      CONTEXT_PATH: docker-images/emitter
+      BASE_PACKAGE: code.cloudfoundry.org/loggregator-tools
+      SUB_PACKAGE: tree/master/emitter
+  - put: emitter-image
+    params:
+      build: build-image/build
+      tag: build-image/tag
+      tag_as_latest: true
+      cache: true
+      cache_tag: latest
+
