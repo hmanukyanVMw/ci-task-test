@@ -21,4 +21,4 @@ params:
   # - The sub-package, relative to the BASE_PACKAGE that is being built
   SUB_PACKAGE:
 run:
-  path: loggregator-ci/tasks/build-go-docker-image/task
+  path: ci-task-test/tasks/build-go-docker-image/task
