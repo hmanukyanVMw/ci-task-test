@@ -25,10 +25,21 @@ cp -r source-repo/. "$workspace_code_path/"
 # download all the dependencies
 export GOPATH="$PWD/workspace"
 
+echo "pwd  is "
+pwd
 echo "ls is "
 ls
 #go get -d -v $BASE_PACKAGE/$SUB_PACKAGE/...
-go get  -v github.com/hmanukyanVMw/ci-task-test/EmitterCI/emitter...
+go get -d -v ci-task-test/EmitterCI/docker-images/emitter...
+
+
+# copy over build context and tag
+pushd "context-repo/$CONTEXT_PATH" > /dev/null
+  mkdir -p "$ciroot/build-image/build"
+  cp -r "$GOPATH/." "$ciroot/build-image/build/"
+  cp Dockerfile "$ciroot/build-image/build/"
+  echo "$sha" > "$ciroot/build-image/tag"
+popd > /dev/null
 
 # copy over build context and tag
 pushd "context-repo/$CONTEXT_PATH" > /dev/null
