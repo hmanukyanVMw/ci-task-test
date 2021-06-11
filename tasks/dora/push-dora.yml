@@ -10,7 +10,7 @@ inputs:
   - name: ci-task-test
   - name: dora-src
 
-run: 
+run:
   path: ci-task-test/tasks/dora/task.sh
 
 params:
