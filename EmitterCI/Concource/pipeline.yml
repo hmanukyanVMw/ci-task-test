@@ -8,18 +8,18 @@ resources:
   type: git
   source:
     branch: master
-    uri: https://github.com/hmanukyanVMw/ci-task-test/EmitterCI
+    uri: https://github.com/hmanukyanVMw/ci-task-test/tree/master/EmitterCI
 
 - name: loggregator-ci
   type: git
   source:
-    uri: https://github.com/hmanukyanVMw/ci-task-test/EmitterCI
+    uri: https://github.com/hmanukyanVMw/ci-task-test/tree/master/EmitterCI
     branch: master
 
 - name: emitter-image-docker-build-context
   type: git
   source:
-    uri: https://github.com/cloudfoundry/loggregator-ci/EmitterCI
+    uri: https://github.com/hmanukyanVMw/ci-task-test/tree/master/EmitterCI
     branch: master
     paths:
     - docker-images/emitter
