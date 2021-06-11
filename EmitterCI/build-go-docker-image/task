@@ -24,9 +24,7 @@ cp -r source-repo/. "$workspace_code_path/"
 
 # download all the dependencies
 export GOPATH="$PWD/workspace"
-echo "tree is "
 
-tree
 echo "ls is "
 ls
 #go get -d -v $BASE_PACKAGE/$SUB_PACKAGE/...
