@@ -9,4 +9,3 @@ require (
 	google.golang.org/grpc v1.16.0
 )
 
-replace github.com/cloudfoundry-incubator/loggregator-tools/emitter => code.cloudfoundry.org/loggregator-tools/emitter
