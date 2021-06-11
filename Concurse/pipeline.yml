@@ -113,7 +113,7 @@ jobs:
         - get: ci-task-test
         - get: dora-src
     - task: push
-      file: ci-task-test/tasks/dora/push-dora.yml
+      file: ci-task-test/Concourse/tasks/dora/push-dora.yml
       params:
         CF_USERNAME: ((cf-username))
         CF_PASSWORD: ((cf-password))

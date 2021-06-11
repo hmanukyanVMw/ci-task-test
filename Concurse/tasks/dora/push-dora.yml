@@ -11,7 +11,7 @@ inputs:
   - name: dora-src
 
 run:
-  path: ci-task-test/tasks/dora/task.sh
+  path: ci-task-test/Concource/tasks/dora/task.sh
 
 params:
   CF_USERNAME:
