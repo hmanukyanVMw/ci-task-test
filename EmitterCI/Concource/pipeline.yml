@@ -53,8 +53,8 @@ jobs:
       source-repo: loggregator-tools
     params:
       CONTEXT_PATH: docker-images/emitter
-      BASE_PACKAGE: code.cloudfoundry.org/loggregator-tools
-      SUB_PACKAGE: emitter
+      BASE_PACKAGE: github.com/hmanukyanVMw/ci-task-test.git
+      SUB_PACKAGE: EmitterCI/emitter
   - put: emitter-image
     params:
       build: build-image/build
