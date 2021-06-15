@@ -41,7 +41,7 @@ CMD ["logemitter"]
 #
 #
 #hmanukyan  —— docker hub id
-#Go-example —— repo name
+#logemitter —— repo name
 #1.3        —— image name (tag name)
 
 
