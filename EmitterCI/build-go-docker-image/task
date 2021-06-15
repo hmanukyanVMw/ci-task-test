@@ -43,10 +43,3 @@ pushd "context-repo/$CONTEXT_PATH" > /dev/null
   echo "$sha" > "$ciroot/build-image/tag"
 popd > /dev/null
 
-# copy over build context and tag
-pushd "context-repo/$CONTEXT_PATH" > /dev/null
-  mkdir -p "$ciroot/build-image/build"
-  cp -r "$GOPATH/." "$ciroot/build-image/build/"
-  cp Dockerfile "$ciroot/build-image/build/"
-  echo "$sha" > "$ciroot/build-image/tag"
-popd > /dev/null

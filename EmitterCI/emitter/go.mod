@@ -1,5 +1,7 @@
 module github.com/cloudfoundry-incubator/loggregator-tools/emitter
 
+go 1.15
+
 require (
 	code.cloudfoundry.org/go-diodes v0.0.0-20180905200951-72629b5276e3 // indirect
 	code.cloudfoundry.org/go-envstruct v1.3.0
@@ -8,4 +10,3 @@ require (
 	github.com/onsi/gomega v1.4.2 // indirect
 	google.golang.org/grpc v1.16.0
 )
-
