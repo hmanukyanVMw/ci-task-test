@@ -1,7 +1,15 @@
 
 # how to push log-emitter application in cloud foundry
+- Enable and Disable the diego_docker Feature Flag
+  The diego_docker feature flag governs whether a CF deployment supports Docker containers.
 
-- In first step we should build this docker image, create Docker file `touch Dockerfile` and copy this code.
+  To enable Docker support, run:
+
+  <pre><code>cf enable-feature-flag diego_docker</pre></code>
+  To disable Docker support, run:
+  <pre><code>cf disable-feature-flag diego_docker</pre></code>
+
+- Then in first step we should build this docker image
     <pre><code>
     FROM golang:1.10
     
@@ -10,7 +18,7 @@
     GOARCH=amd64
     
     # Set the Current Working Directory inside the container
-    WORKDIR $GOPATH/src/github.com/cloudfoundry-incubator/loggregator-tools/logemitter
+    WORKDIR $GOPATH/src/logemitter
     
     # Copy everything from the current directory to the PWD(Present Working Directory) inside the container
     COPY . .
@@ -28,22 +36,22 @@
     CMD ["logemitter"]
     </pre></code>
 - For building docker image docker image you should run command like this
-   <pre><code>build -t hmanukyan/logemitter:1.2 . </pre></code>
-    - hmanukyan is docker hub id (should get from [docker-hub account](https://hub.docker.com) account username)
-    - logemitter is repo name (could be any name)
-    - 1.3 is image name OR tag name (could be any name)
+   <pre><code>docker build -t hmanukyan/logemitter:1.2 . </pre></code>
+  - hmanukyan is docker hub id (should get from [docker-hub](https://hub.docker.com) account username)
+  - logemitter is repo name (could be any name)
+  - 1.3 is image name OR tag name (could be any name)
 - In the next step, you mast push docker in your account
   > Important Notes,    
   It is mandatory to push, cf not get the image from local docker repository
   <pre><code>docker image push hmanukyan/logemitter:1.2</pre></code>
 - finally we can push the app in cloud foundry
   <pre><code>cf push logemitter --docker-image hmanukyan/go-example:1.3  \
-             --no-route --no-start --health-check-type process -m 32M -k 32M
+             --no-route --no-start --health-check-type process 
   </pre></code>
 - If you interesting how to run docker image in locally then you can look this example
   <pre><code>docker container run -d --name APPLICATION_NAME hmanukyan/logemitter:1.2</pre></code>
-  - You can see container with this  `docker ps` command and with flag `-a` you can see all containers 
-   which is not successfully run `docker ps -a`
+  - You can see container with this  `docker ps` command and with flag `-a` you can see all containers
+    which is not successfully run `docker ps -a`
 > Notes,    
 for running application which is running in some port you need add -p 8000:8080
 <pre><code>docker container run -d --name APPLICATION_NAME -p 8000:8080 hmanukyan/logemitter:1.2</pre></code>
