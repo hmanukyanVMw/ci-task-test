@@ -5,7 +5,7 @@ ENV CGO_ENABLED=0 \
     GOARCH=amd64
 
 # Set the Current Working Directory inside the container
-WORKDIR $GOPATH/src/github.com/cloudfoundry-incubator/loggregator-tools/logemitter
+WORKDIR $GOPATH/src/logemitter
 
 # Copy everything from the current directory to the PWD(Present Working Directory) inside the container
 COPY . .
