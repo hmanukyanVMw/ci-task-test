@@ -1,7 +1,7 @@
 
 # how to push log-emitter application in cloud foundry
 
-- In first step we should build this docker image
+- In first step we should build this docker image, create Docker file and copy this code.
     <pre><code>
     FROM golang:1.10
     
