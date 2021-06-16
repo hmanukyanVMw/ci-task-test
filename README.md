@@ -10,7 +10,7 @@
     GOARCH=amd64
     
     # Set the Current Working Directory inside the container
-    WORKDIR $GOPATH/src/github.com/cloudfoundry-incubator/loggregator-tools/logemitter
+    WORKDIR $GOPATH/src/logemitter
     
     # Copy everything from the current directory to the PWD(Present Working Directory) inside the container
     COPY . .
@@ -28,7 +28,7 @@
     CMD ["logemitter"]
     </pre></code>
 - For building docker image docker image you should run command like this
-   <pre><code>build -t hmanukyan/logemitter:1.2 . </pre></code>
+   <pre><code>docker build -t hmanukyan/logemitter:1.2 . </pre></code>
     - hmanukyan is docker hub id (should get from [docker-hub](https://hub.docker.com) account username)
     - logemitter is repo name (could be any name)
     - 1.3 is image name OR tag name (could be any name)
