@@ -1,7 +1,15 @@
 
 # how to push log-emitter application in cloud foundry
+- Enable and Disable the diego_docker Feature Flag
+  The diego_docker feature flag governs whether a CF deployment supports Docker containers.
 
-- In first step we should build this docker image
+  To enable Docker support, run:
+
+  <pre><code>cf enable-feature-flag diego_docker</pre></code>
+  To disable Docker support, run:
+  <pre><code>cf disable-feature-flag diego_docker</pre></code>
+
+- Then in first step we should build this docker image
     <pre><code>
     FROM golang:1.10
     
@@ -38,7 +46,7 @@
   <pre><code>docker image push hmanukyan/logemitter:1.2</pre></code>
 - finally we can push the app in cloud foundry
   <pre><code>cf push logemitter --docker-image hmanukyan/go-example:1.3  \
-             --no-route --no-start --health-check-type process -m 32M -k 32M
+             --no-route --no-start --health-check-type process 
   </pre></code>
 - If you interesting how to run docker image in locally then you can look this example
   <pre><code>docker container run -d --name APPLICATION_NAME hmanukyan/logemitter:1.2</pre></code>
