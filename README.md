@@ -45,7 +45,7 @@
   It is mandatory to push, cf not get the image from local docker repository
   <pre><code>docker image push hmanukyan/logemitter:1.2</pre></code>
 - finally we can push the app in cloud foundry
-  <pre><code>cf push logemitter --docker-image hmanukyan/go-example:1.3  \
+  <pre><code>cf push logemitter --docker-image hmanukyan/logemitter:1.2  \
              --no-route --no-start --health-check-type process 
   </pre></code>
 - If you interesting how to run docker image in locally then you can look this example
