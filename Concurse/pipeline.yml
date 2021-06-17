@@ -1,49 +1,16 @@
 ---
 resource_types:
 - name: slack-notification
-  type: registry-image
+  type: docker-image
   source:
     repository: cfcommunity/slack-notification-resource
     tag: latest
 
 resources:
-- name: pivnet-stemcellc
-  type: pivnet
-  source:
-    api_token: e92b70863a1a4b8d80e93b7ff43ca8c9-r
-    product_slug: stemcells-ubuntu-xenial
-    product_version: '621.*'
-
-- name: postgres-release
-  type: bosh-io-release
-  source:
-    repository: cloudfoundry/postgres-release
-
-- name: slack-alert
+- name: catalyzers-slack-notification
   type: slack-notification
-  icon: slack
   source:
-    url: https://hooks.slack.com/services/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
-
-- name: ci-task-test
-  type: git
-  source:
-    uri: https://github.com/hmanukyanVMw/ci-task-test.git
-  check_every: 5m
-
-- name: every-hour
-  type: time
-  source:
-    interval: 2h
-    location: America/Los_Angeles
-    start: 6:00 AM
-    stop: 12:00 PM
-    days:
-      - Monday
-      - Tuesday
-      - Wednesday
-      - Thursday
-      - Friday
+    url: https://hooks.slack.com/services/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
 
 - name: dora-src
   type: git
@@ -63,23 +30,8 @@ resources:
 
   #### Update release version ####
 jobs:
-- name: stemcell-notification
-  serial: true
-  plan:
-    - get: pivnet-stemcellc
-      trigger: true
-      params:
-        globs:
-          - '*google*'
-    - put: slack-alert
-      params:
-        text: New Stemcell is released. Tile pipeline is running with the new stemcell.
-        username: Stemcell Bot
-
 - name: something-every-hour
   plan:
-    - get: every-hour
-      trigger: true
     - in_parallel:
         - get: ci-docker
         - get: dora-src
@@ -96,61 +48,18 @@ jobs:
           args:
             - -ce
             - |
-              cf api api.${SYSTEM_DOMAIN} --skip-ssl-validation
-              cf auth ${CF_USERNAME} ${CF_PASSWORD}
-              cf target -o system -s system
-
-              pushd dora-src/assets/dora
-                cf push dora
-              popd
+              echo 123;
         inputs:
           - name: dora-src
-
-- name: push-dora-test
-  serial: true
-  plan:
-    - in_parallel:
-        - get: ci-task-test
-        - get: dora-src
-    - task: push
-      file: ci-task-test/Concourse/tasks/dora/push-dora.yml
-      params:
-        CF_USERNAME: ((cf-username))
-        CF_PASSWORD: ((cf-password))
-        SYSTEM_DOMAIN: ((system-domain))
-
-- name: push-dora
-  serial: true
-  plan:
-    - in_parallel:
-        - get: dora-src
-        - get: ci-docker
-        - get: postgres-release
-        - get: every-hour
-          trigger: true
-          passed: [something-every-hour]
-    - task: push
-      image: ci-docker
-      file: ./tasks/push-dora
-      params:
-        CF_USERNAME: ((cf-username))
-        CF_PASSWORD: ((cf-password))
-        SYSTEM_DOMAIN: ((system-domain))
-  on_failure:
+  on_success:
     do:
-      - put: slack-alert
+      - put: catalyzers-slack-notification
         params:
-          silent: true
-          username: concource
-          icon_emoji: ":concourse:"
-          text: ":red_circle: Log-store failed to create a final release
-                $ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME"
+          text: test slack-notification
+          username: Stemcell Bot
 
 #### Organize Jobs ####
 groups:
   - name: push dora
     jobs:
-      - push-dora-test
       - something-every-hour
-      - push-dora
-      - stemcell-notification

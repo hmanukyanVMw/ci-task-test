@@ -1,6 +1,8 @@
 DOCKER_HOST="10.0.1.5"
 DOCKER_TAG="latest"
 
+#docker-compose up -d
+
 fly --target tutorial set-pipeline --config ./pipeline.yml  \
     --load-vars-from <(lpass show --notes "Shared-PCF Metrics/Catalyst/ci_vars.yml") \
       --var docker-host=${DOCKER_HOST} \
@@ -9,3 +11,4 @@ fly --target tutorial set-pipeline --config ./pipeline.yml  \
     --var cf-username=admin \
     --var cf-password=poiO7PNM_Mefna-ZqDqIMtaK3Ilq5Fxl \
     --pipeline tutorial
+
