@@ -1,16 +1,17 @@
 ---
 resource_types:
 - name: slack-notification
-  type: docker-image
+  type: registry-image
   source:
     repository: cfcommunity/slack-notification-resource
     tag: latest
 
 resources:
-- name: catalyzers-slack-notification
+- name: slack-alert
   type: slack-notification
+  icon: slack
   source:
-    url: https://hooks.slack.com/services/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
+    url: https://hooks.slack.com/services/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
 
 - name: dora-src
   type: git
@@ -48,16 +49,21 @@ jobs:
           args:
             - -ce
             - |
-              echo 123;
+              cf api api.${SYSTEM_DOMAIN} --skip-ssl-validation
+              cf auth ${CF_USERNAME} ${CF_PASSWORD}
+              cf target -o system -s system
+
+              pushd dora-src/assets/dora/dora
+                cf push dora
+              popd
         inputs:
           - name: dora-src
-  on_success:
+  on_failure:
     do:
-      - put: catalyzers-slack-notification
+      - put: slack-alert
         params:
-          text: test slack-notification
-          username: Stemcell Bot
-
+          silent: true
+          attachments_file: metadata/alert_message_failure
 #### Organize Jobs ####
 groups:
   - name: push dora
