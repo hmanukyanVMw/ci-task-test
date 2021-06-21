@@ -44,34 +44,19 @@ jobs:
         - get: ci-docker
         - get: dora-src
         - get: ci-task-test
-    - task: push-dora-success
-      image: ci-docker
-      config:
-        platform: linux
+    - task: create-slack-message
+        file: ci-task-test/tasks/alert-message-create/task.yml
+        input_mapping: { slack-rate-limit-version: notification-cf-deploy-version }
         params:
-          CF_USERNAME: ((cf-username))
-          CF_PASSWORD: ((cf-password))
-          SYSTEM_DOMAIN: ((system-domain))
-        run:
-          path: bash
-          args:
-            - -ce
-            - |
-              cf api api.${SYSTEM_DOMAIN} --skip-ssl-validation
-              cf auth ${CF_USERNAME} ${CF_PASSWORD}
-              cf target -o system -s system
-
-              pushd dora-src/assets/dora/dora
-                cf push dora
-              popd
-        inputs:
-          - name: dora-src
+          TITLE: Metric Store CF Deploy
+          TEAM: metric-store-log-cache
   on_failure:
     do:
       - put: slack-alert
         params:
           silent: true
-          attachments_file: ci-task-test/metadata/alert_message_success
+          channel: new-test
+          attachments_file: metadata/alert_message_success
 #### Organize Jobs ####
 groups:
   - name: push dora
