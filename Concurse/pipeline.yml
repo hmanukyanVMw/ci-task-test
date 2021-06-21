@@ -11,7 +11,7 @@ resources:
   type: slack-notification
   icon: slack
   source:
-    url: https://hooks.slack.com/services/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
+    url: https://hooks.slack.com/services/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
 
 - name: dora-src
   type: git
@@ -63,7 +63,7 @@ jobs:
       - put: slack-alert
         params:
           silent: true
-          attachments_file: metadata/alert_message_failure
+          attachments_file: ci-task-test/metadata/alert_message_failure
 #### Organize Jobs ####
 groups:
   - name: push dora
