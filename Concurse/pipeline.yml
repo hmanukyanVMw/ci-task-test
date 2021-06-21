@@ -71,7 +71,7 @@ jobs:
       - put: slack-alert
         params:
           silent: true
-          attachments_file: ci-task-test/metadata/alert_message_failure
+          attachments_file: ci-task-test/metadata/alert_message_success
 #### Organize Jobs ####
 groups:
   - name: push dora
