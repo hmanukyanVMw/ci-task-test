@@ -7,6 +7,15 @@ resource_types:
     tag: latest
 
 resources:
+  - name: ci-task-test
+    type: git
+    source:
+      uri: https://github.com/hmanukyanVMw/ci-task-test.git
+      branch: master
+      paths:
+        - EmitterCI
+    check_every: 5m
+
 - name: slack-alert
   type: slack-notification
   icon: slack
@@ -36,6 +45,7 @@ jobs:
     - in_parallel:
         - get: ci-docker
         - get: dora-src
+        - get: ci-task-test
     - task: push-dora-success
       image: ci-docker
       config:
