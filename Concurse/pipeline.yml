@@ -45,12 +45,12 @@ jobs:
         - get: dora-src
         - get: ci-task-test
     - task: create-slack-message
-        file: ci-task-test/tasks/alert-message-create/task.yml
-        input_mapping: { slack-rate-limit-version: notification-cf-deploy-version }
-        params:
-          TITLE: Metric Store CF Deploy
-          TEAM: metric-store-log-cache
-  on_failure:
+      file: ci-task-test/Concurse/tasks/alert-message-create/task.yml
+      input_mapping: { slack-rate-limit-version: notification-cf-deploy-version }
+      params:
+        TITLE: Metric Store CF Deploy
+        TEAM: metric-store-log-cache
+  on_success:
     do:
       - put: slack-alert
         params:

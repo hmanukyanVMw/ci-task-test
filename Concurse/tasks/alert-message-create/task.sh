@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-. ./ci-task-test/Concource/tasks/alert-message-create/shared_bash
+. ./ci-task-test/Concurse/tasks/alert-message-create/shared_bash
 set -eoux pipefail
 
 alert_setup

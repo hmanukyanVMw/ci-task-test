@@ -14,7 +14,7 @@ outputs:
   - name: metadata
 
 run:
-  path: ci-task-test/Concource/tasks/alert-message-create/task.sh
+  path: ci-task-test/Concurse/tasks/alert-message-create/task.sh
 
 params:
   TITLE:
