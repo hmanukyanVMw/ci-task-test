@@ -22,7 +22,9 @@ run:
 
       mkdir -p metadata
       touch metadata/release-version
-      new=$(jq -c ". += [{ title: \"${PRODUCT_VERSION} passed!\", title_link: \"http://127.0.0.1:8080/teams/main/pipelines/tutorial/jobs/get-product-envs/builds/10\", color: \"good\"}]")
+      echo "starting task"
+
+      new=$(jq -c ". += [{ title: \"${PRODUCT_VERSION} passed!\", color: \"good\"}]")
       echo $new > metadata/release-version
 
       echo $PRODUCT_FILE
