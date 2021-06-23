@@ -1,0 +1,58 @@
+---
+platform: linux
+
+inputs:
+  - name: untested-product
+
+run:
+  path: bash
+  args:
+    - -ceuf
+    - |
+      ROOT_DIR=$(pwd)
+
+      PRODUCT_NAME="appMetrics"
+
+      #### Upload Product ####
+      PRODUCT_FILE=$(find $ROOT_DIR/untested-product -name app-metrics-*.pivotal)
+      PRODUCT_VERSION=$(cat $ROOT_DIR/untested-product/version)
+
+      echo $PRODUCT_FILE
+      echo PRODUCT_VERSION
+
+#      om upload-product --product ${PRODUCT_FILE}
+#      om stage-product --product-name ${PRODUCT_NAME} --product-version ${PRODUCT_VERSION}
+#
+#      #### Upload Stemcell ####
+#      STEMCELL_FILE=$(find $ROOT_DIR/pivnet-stemcell -name light-*-google-*.tgz)
+#      STEMCELL_VERSION=$(cat ${ROOT_DIR}/pivnet-stemcell/metadata.json | jq -r ".Release.Version")
+#
+#      om upload-stemcell --stemcell ${STEMCELL_FILE} --floating false
+#      om assign-stemcell --product ${PRODUCT_NAME} --stemcell ${STEMCELL_VERSION}
+#
+#      #### Configure Product ####
+#
+#      AZS=$(echo $ENV_LOCK_FILE | jq -r '.azs')
+#      OPS_MANAGER_NETWORK=$(echo $ENV_LOCK_FILE | jq -r '.ert_subnet')
+#
+#      OPS_MANAGER_ZONE1="$(echo $AZS | jq -r .[0])"
+#      OPS_MANAGER_ZONE2="$(echo $AZS | jq -r .[1])"
+#      OPS_MANAGER_ZONE3="$(echo $AZS | jq -r .[2])"
+#      cat <<-HEREDOC > generated-configured-product.yml
+#      ---
+#      product-name: ${PRODUCT_NAME}
+#      network-properties:
+#        network:
+#          name: $OPS_MANAGER_NETWORK
+#        other_availability_zones:
+#        - name: $OPS_MANAGER_ZONE1
+#        - name: $OPS_MANAGER_ZONE2
+#        - name: $OPS_MANAGER_ZONE3
+#        singleton_availability_zone:
+#          name: $OPS_MANAGER_ZONE1
+#      HEREDOC
+#
+#      om configure-product --config generated-configured-product.yml
+#
+#      #### Apply Changes  ####
+#      om apply-changes --product-name ${PRODUCT_NAME}

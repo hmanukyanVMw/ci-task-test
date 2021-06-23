@@ -62,7 +62,7 @@ jobs:
 
 #### Organize Jobs ####
 groups:
-  - name: push dora
+  - name: slack webhook
     jobs:
       - something-every-hour
       - get-product-envs
