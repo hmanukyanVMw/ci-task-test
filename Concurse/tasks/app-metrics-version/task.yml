@@ -21,8 +21,7 @@ run:
       PRODUCT_VERSION=$(cat $ROOT_DIR/untested-product/version)
 
       mkdir -p metadata
-      touch metadata/alert_message_failure
-      touch metadata/alert_message_success
+      touch metadata/release-version
       echo "[]" > metadata/release-version
 
       echo $PRODUCT_FILE
