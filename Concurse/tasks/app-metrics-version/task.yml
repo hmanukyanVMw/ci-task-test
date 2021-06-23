@@ -14,8 +14,8 @@ run:
       PRODUCT_NAME="appMetrics"
 
       #### Upload Product ####
-      PRODUCT_FILE=$(find $ROOT_DIR/untested-product -name app-metrics-*.pivotal)
-      PRODUCT_VERSION=$(cat $ROOT_DIR/untested-product/version)
+      PRODUCT_FILE=$(find $ROOT_DIR/ci-task-test -name app-metrics-*.pivotal)
+      PRODUCT_VERSION=$(cat $ROOT_DIR/ci-task-test/version)
 
       echo $PRODUCT_FILE
       echo PRODUCT_VERSION
