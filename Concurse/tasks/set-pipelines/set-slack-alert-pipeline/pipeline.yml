@@ -18,14 +18,7 @@ resources:
   type: slack-notification
   icon: slack
   source:
-    url: https://hooks.slack.com/services/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
-
-- name: dora-src
-  type: git
-  source:
-    uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
-    branch: main
-    private_key: ((catalyst-git-key))
+    url: https://hooks.slack.com/services/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
 
 - name: ci-docker
   type: docker-image
@@ -42,13 +35,11 @@ jobs:
   plan:
     - in_parallel:
         - get: ci-docker
-        - get: dora-src
         - get: ci-task-test
     - task: create-slack-message
       file: ci-task-test/Concurse/tasks/alert-message-create/task.yml
-      input_mapping: { slack-rate-limit-version: notification-cf-deploy-version }
       params:
-        TITLE: Metric Store CF Deploy
+        TITLE: Metric Store 102.99 Deploy
         TEAM: metric-store-log-cache
   on_success:
     do:
@@ -57,8 +48,21 @@ jobs:
           silent: true
           channel: new-test
           attachments_file: metadata/alert_message_success
+
+
+- name: get-product-envs
+  serial: true
+  plan:
+    - in_parallel:
+        - get: ci-docker
+        - get: ci-task-test
+    - task: get-app-metrics-info
+      image: ci-docker
+      file: ci-task-test/Concurse/tasks/app-metrics-version/task.yml
+
 #### Organize Jobs ####
 groups:
   - name: push dora
     jobs:
       - something-every-hour
+      - get-product-envs

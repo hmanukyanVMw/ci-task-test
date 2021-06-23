@@ -1,0 +1,65 @@
+---
+resource_types:
+  - name: slack-notification
+    type: docker-image
+    source:
+      repository: cfcommunity/slack-notification-resource
+      tag: latest
+
+resources:
+  - name: catalyzers-slack-notification
+    type: slack-notification
+    source:
+      url: https://hooks.slack.com/services/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
+
+  - name: dora-src
+    type: git
+    source:
+      uri: git@github.com:cloudfoundry/cf-acceptance-tests.git
+      branch: main
+      private_key: ((catalyst-git-key))
+
+  - name: ci-docker
+    type: docker-image
+    source:
+      email: ((docker-email))
+      password: ((docker-password))
+      repository: pcfmetrics/catalyst
+      username: ((docker-username))
+      tag: ((docker-tag))
+
+    #### Update release version ####
+jobs:
+  - name: something-every-hour
+    plan:
+      - in_parallel:
+          - get: ci-docker
+          - get: dora-src
+      - task: push-dora-success
+        image: ci-docker
+        config:
+          platform: linux
+          params:
+            CF_USERNAME: ((cf-username))
+            CF_PASSWORD: ((cf-password))
+            SYSTEM_DOMAIN: ((system-domain))
+          run:
+            path: bash
+            args:
+              - -ce
+              - |
+                echo 123;
+          inputs:
+            - name: dora-src
+    on_success:
+      do:
+        - put: catalyzers-slack-notification
+          params:
+            text: test slack-notification
+            username: Stemcell Bot
+
+#### Organize Jobs ####
+groups:
+  - name: push dora
+    jobs:
+      - something-every-hour
