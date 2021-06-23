@@ -33,7 +33,7 @@ resources:
   type: slack-notification
   icon: slack
   source:
-    url: https://hooks.slack.com/services/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
+    url: https://hooks.slack.com/services/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
 
 - name: ci-docker
   type: docker-image
