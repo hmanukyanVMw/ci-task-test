@@ -24,7 +24,8 @@ run:
       touch metadata/release-version
       echo "starting task"
 
-      new=$(jq -c ". += [{ title: \"${PRODUCT_VERSION} passed!\", color: \"good\"}]")
+      new=$(jq -n --arg u $PRODUCT_VERSION --arg p 'good' '{title: $u, footer: $p, color: $p }')
+
       echo $new > metadata/release-version
 
       echo $PRODUCT_FILE
