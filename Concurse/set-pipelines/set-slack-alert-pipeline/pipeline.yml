@@ -33,7 +33,7 @@ resources:
   type: slack-notification
   icon: slack
   source:
-    url: https://hooks.slack.com/services/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
+    url: https://hooks.slack.com/services/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
 
 - name: ci-docker
   type: docker-image
@@ -85,7 +85,7 @@ jobs:
 
 #### Organize Jobs ####
 groups:
-  - name: slack webhook
+  - name: slack-webhook
     jobs:
       - something-every-hour
       - get-product-envs

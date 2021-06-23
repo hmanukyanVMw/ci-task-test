@@ -22,7 +22,7 @@ run:
 
       mkdir -p metadata
       touch metadata/release-version
-      echo "[]" > metadata/release-version
+      echo '[{"title":"$PRODUCT_VERSION","title_link":"http://127.0.0.1:8080/teams/main/pipelines/tutorial/jobs/get-product-envs/builds/10","color":"good"}]' > metadata/release-version
 
       echo $PRODUCT_FILE
       echo $PRODUCT_VERSION
