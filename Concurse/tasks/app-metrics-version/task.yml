@@ -23,7 +23,7 @@ run:
       mkdir -p metadata
       touch metadata/alert_message_failure
       touch metadata/alert_message_success
-      echo "[version: $PRODUCT_FILE]" > metadata/release-version
+      echo "[]" > metadata/release-version
 
       echo $PRODUCT_FILE
       echo $PRODUCT_VERSION
