@@ -1,13 +1,20 @@
 ---
-resource_types:
-  gcs-service-account: &gcs-service-account ((appwatch-service-account-json))
+gcs-service-account: &gcs-service-account ((appwatch-service-account-json))
 
-  - name: slack-notification
+resource_types:
+- name: slack-notification
   type: registry-image
   source:
     repository: cfcommunity/slack-notification-resource
     tag: latest
 
+- name: gcs-resource
+  type: docker-image
+  source:
+    repository: frodenas/gcs-resource
+
+
+resources:
 - name: untested-product
   type: gcs-resource
   source:
@@ -15,7 +22,6 @@ resource_types:
     json_key: *gcs-service-account
     regexp: ((github-branch))/artifacts/untested-product/app-metrics-(.*-((build-tag))\..*)\.pivotal
 
-resources:
 - name: ci-task-test
   type: git
   source:
@@ -27,7 +33,7 @@ resources:
   type: slack-notification
   icon: slack
   source:
-    url: https://hooks.slack.com/services/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
+    url: https://hooks.slack.com/services/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
 
 - name: ci-docker
   type: docker-image
@@ -69,6 +75,13 @@ jobs:
     - task: get-app-metrics-info
       image: ci-docker
       file: ci-task-test/Concurse/tasks/app-metrics-version/task.yml
+  on_success:
+    do:
+      - put: slack-alert
+        params:
+          silent: true
+          channel: new-test
+          attachments_file: metadata/release-version
 
 #### Organize Jobs ####
 groups:

@@ -4,6 +4,9 @@ platform: linux
 inputs:
   - name: untested-product
 
+outputs:
+  - name: metadata
+
 run:
   path: bash
   args:
@@ -17,8 +20,13 @@ run:
       PRODUCT_FILE=$(find $ROOT_DIR/untested-product -name app-metrics-*.pivotal)
       PRODUCT_VERSION=$(cat $ROOT_DIR/untested-product/version)
 
+      mkdir -p metadata
+      touch metadata/alert_message_failure
+      touch metadata/alert_message_success
+      echo "[version: $PRODUCT_FILE]" > metadata/release-version
+
       echo $PRODUCT_FILE
-      echo PRODUCT_VERSION
+      echo $PRODUCT_VERSION
 
 #      om upload-product --product ${PRODUCT_FILE}
 #      om stage-product --product-name ${PRODUCT_NAME} --product-version ${PRODUCT_VERSION}
