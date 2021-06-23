@@ -2,7 +2,7 @@
 platform: linux
 
 inputs:
-  - name: untested-product
+  - name: ci-task-test
 
 run:
   path: bash
