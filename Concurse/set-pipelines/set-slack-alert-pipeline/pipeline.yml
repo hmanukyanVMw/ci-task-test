@@ -1,10 +1,19 @@
 ---
 resource_types:
-- name: slack-notification
+  gcs-service-account: &gcs-service-account ((appwatch-service-account-json))
+
+  - name: slack-notification
   type: registry-image
   source:
     repository: cfcommunity/slack-notification-resource
     tag: latest
+
+- name: untested-product
+  type: gcs-resource
+  source:
+    bucket: catalyst-app
+    json_key: *gcs-service-account
+    regexp: ((github-branch))/artifacts/untested-product/app-metrics-(.*-((build-tag))\..*)\.pivotal
 
 resources:
 - name: ci-task-test
@@ -56,6 +65,7 @@ jobs:
     - in_parallel:
         - get: ci-docker
         - get: ci-task-test
+        - get: untested-product
     - task: get-app-metrics-info
       image: ci-docker
       file: ci-task-test/Concurse/tasks/app-metrics-version/task.yml
