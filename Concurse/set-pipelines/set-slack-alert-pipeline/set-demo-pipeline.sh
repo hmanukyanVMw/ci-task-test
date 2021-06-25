@@ -2,6 +2,7 @@ DOCKER_HOST="10.0.1.5"
 DOCKER_TAG="latest"
 BRANCH="main"
 #docker-compose up -d
+#fly --target tutorial trigger-job --job tutorial/get-product-envs --watch
 
 fly --target tutorial set-pipeline --config ./pipeline.yml  \
     --load-vars-from <(lpass show --notes "Shared-PCF Metrics/Catalyst/ci_vars.yml") \

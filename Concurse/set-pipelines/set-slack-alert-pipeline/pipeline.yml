@@ -15,12 +15,12 @@ resource_types:
 
 
 resources:
-- name: untested-product
+- name: tested-product
   type: gcs-resource
   source:
     bucket: catalyst-app
     json_key: *gcs-service-account
-    regexp: ((github-branch))/artifacts/untested-product/app-metrics-(.*-((build-tag))\..*)\.pivotal
+    regexp: ((github-branch))/artifacts/tested-product/app-metrics-(.*-((build-tag))\..*)\.pivotal
 
 - name: ci-task-test
   type: git
@@ -70,11 +70,69 @@ jobs:
   plan:
     - in_parallel:
         - get: ci-docker
-        - get: ci-task-test
-        - get: untested-product
+        - get: tested-product
     - task: get-app-metrics-info
       image: ci-docker
-      file: ci-task-test/Concurse/tasks/app-metrics-version/task.yml
+      config:
+        platform: linux
+        inputs:
+          - name: tested-product
+            optional: true
+        outputs:
+          - name: metadata
+        params:
+          TITLE:
+          TEAM: main
+        run:
+          path: bash
+          args:
+            - -ce
+            - |
+              ROOT_DIR=$(pwd)
+
+              PRODUCT_NAME="appMetrics"
+
+              #### Upload Product ####
+              PRODUCT_FILE=$(find tested-product -name app-metrics-*.pivotal)
+              PRODUCT_VERSION=$(cat tested-product/version)
+              TITLE="Created tile for App Metrics $PRODUCT_VERSION"
+              Authenticated_URL="Authenticated URL:  https://storage.cloud.google.com/catalyst-app/main/artifacts/$PRODUCT_FILE"
+              GSUITIL_URI="gsutil URI:  gs://catalyst-app/main/artifacts/$PRODUCT_FILE"
+
+              mkdir -p metadata
+              touch metadata/release-version
+              echo "starting task"
+              new=$(jq -n --arg t "${TITLE}" --arg aurl "${Authenticated_URL}" --arg guri "${GSUITIL_URI}" '[{
+                  "blocks": [
+                      {
+                          "type": "section",
+                          "text": {
+                              "type": "mrkdwn",
+                              "text": $t
+                          }
+                      },
+                      {
+                          "type": "section",
+                          "text": {
+                              "type": "mrkdwn",
+                              "text": $aurl
+                          }
+                      },
+                      {
+                          "type": "section",
+                          "text": {
+                              "type": "mrkdwn",
+                              "text": $guri
+                          }
+                      }
+                  ]
+              }]')
+              echo $new > metadata/release-version
+
+              cat metadata/release-version
+
+              echo $PRODUCT_FILE
+              echo $PRODUCT_VERSION
   on_success:
     do:
       - put: slack-alert
