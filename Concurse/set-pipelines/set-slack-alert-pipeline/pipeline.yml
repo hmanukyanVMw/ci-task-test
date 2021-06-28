@@ -70,6 +70,7 @@ jobs:
     - in_parallel:
         - get: ci-docker
         - get: tested-product
+        - get: ci-task-test
     - task: get-app-metrics-info
       image: ci-docker
       file: ci-task-test/Concurse/tasks/app-metrics-version/task.yml
