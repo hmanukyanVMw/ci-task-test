@@ -25,7 +25,7 @@ alert_title() {
   local team="${2:-main}"
   local LAST_COMMIT="${3}"
   local LAST_COMMIT_DATE="${4}"
-  local build_link="\${ATC_EXTERNAL_URL}/teams/${team}/pipelines/\${BUILD_PIPELINE_NAME}/jobs/\${BUILD_JOB_NAME}/builds/\${BUILD_NAME}"
+  BUILD_LINK="*<\${ATC_EXTERNAL_URL}/teams/${team}/pipelines/\${BUILD_PIPELINE_NAME}/jobs/\${BUILD_JOB_NAME}/builds/\${BUILD_NAME}|See in pipeline>*"
   current=$(cat metadata/core_metrics)
 
    new=$(jq -n --arg t "${title}" --arg lc "${LAST_COMMIT}" --arg ad "${LAST_COMMIT_DATE}" --arg bl "${build_link}" '[{

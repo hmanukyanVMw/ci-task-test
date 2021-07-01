@@ -83,58 +83,13 @@ jobs:
                 LAST_COMMIT_DATE=$(git log --author="$a" --pretty="%ai" | head -n1)
               popd
 
-              echo $LAST_COMMIT
-              BUILD_LINK="*<\${ATC_EXTERNAL_URL}/teams/${team}/pipelines/\${BUILD_PIPELINE_NAME}/jobs/\${BUILD_JOB_NAME}/builds/\${BUILD_NAME}|See in pipeline>*"
-              TITLE="Metric Store core metrics info"
+               . ./ci-task-test/Concurse/tasks/app-metrics-version/create-slack-alert
+               set -eoux pipefail
 
-              mkdir -p metadata
-              touch metadata/core_metrics
-              new=$(jq -n --arg t "${TITLE}" --arg lc "${LAST_COMMIT}" --arg ad "${LAST_COMMIT_DATE}" --arg bl "${BUILD_LINK}" '[{
-                      "blocks": [
-                          {
-                              "type": "section",
-                              "text": {
-                                  "type": "plain_text",
-                                  "text": $t,
-                                  "emoji": true
-                              }
-                          },
-                          {
-                              "type": "section",
-                              "fields": [
-                                  {
-                                      "type": "mrkdwn",
-                                      "text": "Last Commit:"
-                                  },
-                                  {
-                                      "type": "mrkdwn",
-                                      "text": $lc
-                                  }
-                              ]
-                          },
-                          {
-                              "type": "section",
-                              "fields": [
-                                  {
-                                      "type": "mrkdwn",
-                                      "text": "Author Date"
-                                  },
-                                  {
-                                      "type": "mrkdwn",
-                                      "text": $ad
-                                  }
-                              ]
-                          },
-                          {
-                              "type": "section",
-                              "text": {
-                                  "type": "mrkdwn",
-                                  "text": $bl
-                              }
-                          }
-                      ]
-                  }]')
-              echo $new > metadata/core_metrics
+               alert_setup
+               TITLE="Metric Store core metrics info"
+               alert_title "${TITLE}" "main" "${LAST_COMMIT}" "${LAST_COMMIT_DATE}"
+                ls
   on_success:
     do:
       - put: slack-alert
