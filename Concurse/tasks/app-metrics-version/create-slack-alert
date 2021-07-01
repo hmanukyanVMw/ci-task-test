@@ -1,3 +1,8 @@
+alert_setup() {
+   mkdir -p metadata
+   touch metadata/core_metrics
+   echo "on create-slack-alert file"
+}
 
 alert_title() {
   local title="${1} #\${BUILD_NAME}"
