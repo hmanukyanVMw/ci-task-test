@@ -73,6 +73,8 @@ alert_title() {
          }
      ]
     }]')
+    pwd
+    ls
    echo $new > metadata/core_metrics
 }
 
