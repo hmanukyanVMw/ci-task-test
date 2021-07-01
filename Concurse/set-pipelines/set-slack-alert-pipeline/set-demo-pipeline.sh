@@ -3,7 +3,8 @@ DOCKER_TAG="latest"
 BRANCH="main"
 #docker-compose up -d
 #fly --target tutorial trigger-job --job tutorial/get-product-envs --watch
-#https://hooks.slack.com/services/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
+#https:
+# //hooks.slack.com/services/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
 fly --target tutorial set-pipeline --config ./pipeline.yml  \
     --load-vars-from <(lpass show --notes "Shared-PCF Metrics/Catalyst/ci_vars.yml") \
     --var appwatch-service-account-json="$(lpass show --notes "bbl-appwatch service account")" \
