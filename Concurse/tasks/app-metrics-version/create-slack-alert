@@ -15,11 +15,9 @@ echo_red() {
 }
 
 alert_setup() {
-  mkdir -p metadata
-  touch metadata/alert_message_failure
-  touch metadata/alert_message_success
-  echo "[]" > metadata/alert_message_failure
-  echo "[]" > metadata/alert_message_success
+   mkdir -p metadata
+   touch metadata/core_metrics
+   echo "on create-slack-alert file"
 }
 
 alert_title() {
