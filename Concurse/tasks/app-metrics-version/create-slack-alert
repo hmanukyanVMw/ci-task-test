@@ -70,9 +70,8 @@ alert_title() {
              }
          }
      ]
- }]')
+    }]')
    echo $new > metadata/core_metrics
-  fi
 }
 
 alert_failure() {
