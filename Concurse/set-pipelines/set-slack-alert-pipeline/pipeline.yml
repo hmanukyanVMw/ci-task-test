@@ -79,7 +79,7 @@ jobs:
             - -ce
             - |
               pushd ci-task-test
-                LAST_COMMIT==$(git rev-parse HEAD)
+                LAST_COMMIT=$(git rev-parse HEAD)
                 LAST_COMMIT_DATE=$(git log --author="$a" --pretty="%ai" | head -n1)
               popd
 
