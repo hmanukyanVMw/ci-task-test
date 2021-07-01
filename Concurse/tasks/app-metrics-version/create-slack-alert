@@ -1,0 +1,177 @@
+echo_green() {
+  GREEN='\033[0;32m'
+  CLEAR='\033[0m'
+  local message=${1}
+
+  echo -e "${GREEN}${message}${CLEAR}"
+}
+
+echo_red() {
+  RED='\033[0;31m'
+  CLEAR='\033[0m'
+  local message=${1}
+
+  echo -e "${RED}${message}${CLEAR}"
+}
+
+alert_setup() {
+  mkdir -p metadata
+  touch metadata/alert_message_failure
+  touch metadata/alert_message_success
+  echo "[]" > metadata/alert_message_failure
+  echo "[]" > metadata/alert_message_success
+}
+
+alert_title() {
+  local title="${1} #\${BUILD_NAME}"
+  local team="${2:-main}"
+  local build_link="\${ATC_EXTERNAL_URL}/teams/${team}/pipelines/\${BUILD_PIPELINE_NAME}/jobs/\${BUILD_JOB_NAME}/builds/\${BUILD_NAME}"
+  current=$(cat metadata/alert_message_failure)
+  current=$(cat metadata/alert_message_success)
+
+  if [ -d slack-rate-limit-version ]; then
+    local current_version=$(cat slack-rate-limit-version/version)
+    local attempt=$(patch_from_semver ${current_version})
+
+    new=$(echo $current | jq -c ". += [{ title: \"${title} failed!\", title_link: \"${build_link}\", footer: \"attempt #${attempt}\", color: \"danger\"}]")
+    echo $new > metadata/alert_message_failure
+
+    new=$(echo $current | jq -c ". += [{ title: \"${title} passed!\", title_link: \"${build_link}\", footer: \"attempt #${attempt}\", color: \"good\"}]")
+    echo $new > metadata/alert_message_success
+  else
+    new=$(echo $current | jq -c ". += [{ title: \"${title} failed!\", title_link: \"${build_link}\", color: \"danger\"}]")
+    echo $new > metadata/alert_message_failure
+
+    new=$(echo $current | jq -c ". += [{ title: \"${title} passed!\", title_link: \"${build_link}\", color: \"good\"}]")
+    echo $new > metadata/alert_message_success
+  fi
+}
+
+alert_failure() {
+  local message=${1}
+
+  echo_red "${message}"
+
+  current=$(cat metadata/alert_message_failure)
+  new=$(echo $current | jq -c ". += [{ text: \"${message}\", color: \"danger\"}]")
+  echo $new > metadata/alert_message_failure
+}
+
+alert_success() {
+  local message=${1}
+
+  echo_green "${message}"
+
+  current=$(cat metadata/alert_message_success)
+  new=$(echo $current | jq -c ". += [{ text: \"${message}\", color: \"good\"}]")
+  echo $new > metadata/alert_message_success
+}
+
+patch_from_semver() {
+  local version=${1}
+
+  echo ${version} | cut -d. -f3
+}
+
+major_minor_from_semver() {
+  local version=${1}
+
+  echo ${version} | cut -d. -f1,2
+}
+
+major_from_semver() {
+  local version=${1}
+
+  echo ${version} | cut -d. -f1
+}
+
+alert_enable() {
+  cp metadata/alert_message_failure modified-metadata/alert_message_failure
+  cp metadata/alert_message_success modified-metadata/alert_message_success
+  echo ' ' > modified-metadata/alert_toggle
+}
+
+alert_disable() {
+  touch modified-metadata/alert_message_failure
+  touch modified-metadata/alert_message_success
+  touch modified-metadata/alert_toggle
+}
+
+setup_github_ssh() {
+  local github_private_key=${1}
+  echo 'setting up ssh for github ...'
+
+  mkdir -p ~/.ssh/
+
+  git config --global url."git@github.com:".insteadOf "https://github.com/"
+  # github.com pre-auth'd entry, preventing MITM
+  echo "|1|NPml+mK9dImOEfdPPlukb1XTa8Y=|iwB+yq574d08bYzXF8LsBDGFMqg= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==" > ~/.ssh/known_hosts
+
+  echo "${github_private_key}" > ~/.ssh/id_github_com
+  chmod 0600 ~/.ssh/id_github_com
+
+  echo "" >> ~/.ssh/config
+  echo "Host github.com" >> ~/.ssh/config
+  echo -e "\t Hostname github.com" >> ~/.ssh/config
+  echo -e "\t User git" >> ~/.ssh/config
+  echo -e "\t IdentityFile ~/.ssh/id_github_com" >> ~/.ssh/config
+}
+
+calculate_version() {
+  local current_metric_store_release_version_file=${1}
+  local current_dev_version_dir=${2}
+  local new_version_dir=${3}
+  local postfix=${4}
+
+  dev_version=$(cat $current_dev_version_dir/version)
+
+  metric_store_dev_version_semver=$(cat $current_dev_version_dir/version | sed s/-.*//)
+  metric_store_release_version_semver=$(grep "=" ${current_metric_store_release_version_file} | cut -d \" -f 2)
+
+  if [[ "${metric_store_dev_version_semver}" == "${metric_store_release_version_semver}" ]]; then
+    cp ${current_dev_version_dir}/version ${new_version_dir}/version
+  else
+    dev_version="${metric_store_release_version_semver}-${postfix}.0"
+    echo ${dev_version} > ${new_version_dir}/version
+  fi
+}
+
+configure-blobstore() {
+  if [[ -n ${JSON_KEY:-} ]]; then
+    cat << EOF > config/private.yml
+---
+blobstore:
+  options:
+    credentials_source: static
+    json_key: |
+      $(echo ${JSON_KEY})
+EOF
+  fi
+}
+
+extract_version() {
+  local current_version_file=${1}
+  local extracted_version_dir=${2}
+
+  grep "=" ${current_version_file} | cut -d \" -f 2 > ${extracted_version_dir}/version
+}
+
+write_version() {
+    local version=${1}
+    local destination_dir=${2}
+
+    mkdir -p ${destination_dir}
+    cat << EOF > ${destination_dir}/version.go
+package version
+
+const VERSION = "${version}"
+EOF
+}
+
+function pushd() {
+  builtin pushd $@ > /dev/null
+}
+
+function popd() {
+  builtin popd $@ > /dev/null
+}

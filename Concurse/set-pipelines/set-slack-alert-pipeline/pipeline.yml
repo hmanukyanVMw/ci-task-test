@@ -15,13 +15,6 @@ resource_types:
 
 
 resources:
-- name: tested-product
-  type: gcs-resource
-  source:
-    bucket: catalyst-app
-    json_key: *gcs-service-account
-    regexp: ((github-branch))/artifacts/tested-product/app-metrics-(.*-((build-tag))\..*)\.pivotal
-
 - name: ci-task-test
   type: git
   source:
@@ -33,7 +26,7 @@ resources:
   type: slack-notification
   icon: slack
   source:
-    url: https://hooks.slack.com/services/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
+    url: https://hooks.slack.com/services/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
 
 - name: ci-docker
   type: docker-image
@@ -69,19 +62,86 @@ jobs:
   plan:
     - in_parallel:
         - get: ci-docker
-        - get: tested-product
         - get: ci-task-test
     - task: get-app-metrics-info
       image: ci-docker
-      file: ci-task-test/Concurse/tasks/app-metrics-version/task.yml
+      config:
+        platform: linux
+        inputs:
+          - name: ci-task-test
+            optional: true
+        outputs:
+          - name: metadata
+        params:
+        run:
+          path: bash
+          args:
+            - -ce
+            - |
+              pushd ci-task-test
+                LAST_COMMIT==$(git rev-parse HEAD)
+                LAST_COMMIT_DATE=$(git log --author="$a" --pretty="%ai" | head -n1)
+              popd
 
+              echo $LAST_COMMIT
+              BUILD_LINK="*<\${ATC_EXTERNAL_URL}/teams/${team}/pipelines/\${BUILD_PIPELINE_NAME}/jobs/\${BUILD_JOB_NAME}/builds/\${BUILD_NAME}|See in pipeline>*"
+              TITLE="Metric Store core metrics info"
+
+              mkdir -p metadata
+              touch metadata/core_metrics
+              new=$(jq -n --arg t "${TITLE}" --arg lc "${LAST_COMMIT}" --arg ad "${LAST_COMMIT_DATE}" --arg bl "${BUILD_LINK}" '[{
+                      "blocks": [
+                          {
+                              "type": "section",
+                              "text": {
+                                  "type": "plain_text",
+                                  "text": $t,
+                                  "emoji": true
+                              }
+                          },
+                          {
+                              "type": "section",
+                              "fields": [
+                                  {
+                                      "type": "mrkdwn",
+                                      "text": "Last Commit:"
+                                  },
+                                  {
+                                      "type": "mrkdwn",
+                                      "text": $lc
+                                  }
+                              ]
+                          },
+                          {
+                              "type": "section",
+                              "fields": [
+                                  {
+                                      "type": "mrkdwn",
+                                      "text": "Author Date"
+                                  },
+                                  {
+                                      "type": "mrkdwn",
+                                      "text": $ad
+                                  }
+                              ]
+                          },
+                          {
+                              "type": "section",
+                              "text": {
+                                  "type": "mrkdwn",
+                                  "text": $bl
+                              }
+                          }
+                      ]
+                  }]')
+              echo $new > metadata/core_metrics
   on_success:
     do:
       - put: slack-alert
         params:
           silent: true
           channel: new-test
-          attachments_file: metadata/release-version
+          attachments_file: metadata/core_metrics
 
 #### Organize Jobs ####
 groups:
