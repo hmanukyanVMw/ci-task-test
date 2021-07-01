@@ -23,10 +23,12 @@ alert_setup() {
 alert_title() {
   local title="${1} #\${BUILD_NAME}"
   local team="${2:-main}"
+  local LAST_COMMIT="${3}"
+  local LAST_COMMIT_DATE="${4}"
   local build_link="\${ATC_EXTERNAL_URL}/teams/${team}/pipelines/\${BUILD_PIPELINE_NAME}/jobs/\${BUILD_JOB_NAME}/builds/\${BUILD_NAME}"
   current=$(cat metadata/core_metrics)
 
-   new=$(jq -n --arg t "${TITLE}" --arg lc "${LAST_COMMIT}" --arg ad "${LAST_COMMIT_DATE}" --arg bl "${BUILD_LINK}" '[{
+   new=$(jq -n --arg t "${title}" --arg lc "${LAST_COMMIT}" --arg ad "${LAST_COMMIT_DATE}" --arg bl "${build_link}" '[{
      "blocks": [
          {
              "type": "section",
