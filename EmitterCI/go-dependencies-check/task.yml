@@ -1,8 +1,8 @@
 platform: linux
 
 inputs:
-  - get: metric-store-develop
-  - get: ci-task-test
+- get: metric-store-develop
+- get: ci-task-test
 
 run:
   path: ci-task-test/EmitterCI/go-dependencies-check/task
