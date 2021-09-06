@@ -2,12 +2,6 @@
 gcs-service-account: &gcs-service-account ((appwatch-service-account-json))
 
 resource_types:
-- name: slack-notification
-  type: registry-image
-  source:
-    repository: cfcommunity/slack-notification-resource
-    tag: latest
-
 - name: gcs-resource
   type: docker-image
   source:
@@ -15,92 +9,102 @@ resource_types:
 
 
 resources:
-- name: ci-task-test
-  type: git
-  source:
-    uri: https://github.com/hmanukyanVMw/ci-task-test.git
-    branch: master
-  check_every: 5m
+  - name: ci-task-test
+    type: git
+    source:
+      uri: https://github.com/hmanukyanVMw/ci-task-test.git
+      branch: master
+      paths:
+        - EmitterCI
+    check_every: 5m
 
-- name: slack-alert
-  type: slack-notification
-  icon: slack
-  source:
-    url: https://hooks.slack.com/services/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
+  - name: metric-store-develop
+    type: git
+    source:
+      uri: git@github.com:cloudfoundry/metric-store-release
+      branch: develop
+      private_key: |
+            -----BEGIN RSA PRIVATE KEY-----
+            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
+            -----END RSA PRIVATE KEY-----
+      ignore_paths:
+        - .final_builds
+        - releases
+      disable_ci_skip: false
+      clean_tags: true
 
-- name: ci-docker
-  type: docker-image
-  source:
-    email: ((docker-email))
-    password: ((docker-password))
-    repository: pcfmetrics/catalyst
-    username: ((docker-username))
-    tag: ((docker-tag))
+  - name: cf-deployment-concourse-tasks-image
+    type: docker-image
+    source:
+      repository: relintdockerhubpushbot/cf-deployment-concourse-tasks
+      tag: latest
 
   #### Update release version ####
 jobs:
-- name: something-every-hour
-  plan:
-    - in_parallel:
-        - get: ci-docker
-        - get: ci-task-test
-    - task: create-slack-message
-      file: ci-task-test/Concurse/tasks/alert-message-create/task.yml
-      params:
-        TITLE: Metric Store 102.99 Deploy
-        TEAM: metric-store-log-cache
-  on_success:
-    do:
-      - put: slack-alert
-        params:
-          silent: true
-          channel: new-test
-          attachments_file: metadata/alert_message_success
-
-- name: get-product-envs
+- name: metric-store-package-updates
   serial: true
   plan:
     - in_parallel:
-        - get: ci-docker
+        - get: metric-store-develop
         - get: ci-task-test
-    - task: get-app-metrics-info
-      image: ci-docker
-      config:
-        platform: linux
-        inputs:
-          - name: ci-task-test
-            optional: true
-        outputs:
-          - name: metadata
-        params:
-        run:
-          path: bash
-          args:
-            - -ce
-            - |
-              pushd ci-task-test
-                LAST_COMMIT=$(git rev-parse HEAD)
-                LAST_COMMIT_DATE=$(git log --author="$a" --pretty="%ai" | head -n1)
-              popd
+        - get: cf-deployment-concourse-tasks-image
+        - task: outdated
+          timeout: 15m
+          image: cf-deployment-concourse-tasks-image
+          file: ci-task-test/EmitterCI/build-go-docker-image/task.yml
 
-               . ./ci-task-test/Concurse/tasks/app-metrics-version/create-slack-alert
-               set -eoux pipefail
 
-               alert_setup
-               TITLE="Metric Store core metrics info"
-               alert_title "${TITLE}" "main" "${LAST_COMMIT}" "${LAST_COMMIT_DATE}"
-                ls
-  on_success:
-    do:
-      - put: slack-alert
-        params:
-          silent: true
-          channel: new-test
-          attachments_file: metadata/core_metrics
 
 #### Organize Jobs ####
 groups:
-  - name: slack-webhook
+  - name: metric-store-test-env
     jobs:
-      - something-every-hour
-      - get-product-envs
+      - metric-store-package-updates
