@@ -5,4 +5,4 @@ inputs:
   - get: ci-task-test
 
 run:
-  path: metric-store-ci/tasks/go-dependencies-check/task
+  path: ci-task-test/EmitterCI/go-dependencies-check/task
