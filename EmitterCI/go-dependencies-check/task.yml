@@ -2,7 +2,7 @@ platform: linux
 
 inputs:
   - get: metric-store-develop
-  - get: metric-store-ci
+  - get: ci-task-test
 
 run:
   path: metric-store-ci/tasks/go-dependencies-check/task

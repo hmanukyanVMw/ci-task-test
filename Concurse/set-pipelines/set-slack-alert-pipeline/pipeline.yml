@@ -99,7 +99,7 @@ jobs:
         - task: outdated
           timeout: 15m
           image: cf-deployment-concourse-tasks-image
-          file: ci-task-test/EmitterCI/build-go-docker-image/task.yml
+          file: ci-task-test/EmitterCI/go-dependencies-check/task.yml
 
 
 
