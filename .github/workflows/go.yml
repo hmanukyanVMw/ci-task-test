@@ -1,0 +1,50 @@
+name: Log Store - Go
+on:
+  pull_request_target:
+  push:
+    branches-ignore:
+      - "release"
+    paths-ignore:
+      - 'src/VERSION'
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.16.11'
+        id: go
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Build
+        run: |
+          echo "Git HEAD at:"
+          git rev-parse HEAD
+
+          go mod vendor
+          ./scripts/test.sh
+
+  golangci:
+    name: Lint
+    runs-on: ubuntu-18.04
+    if: ${{ !(startsWith(github.ref, 'refs/heads/dependabot/go_modules/') || startsWith(github.head_ref, 'dependabot/go_modules/')) }}
+    steps:
+    - uses: actions/setup-go@v2
+      with:
+        go-version: '1.16.11'
+      id: go
+    - uses: actions/checkout@v2
+    - name: Get out of sync vendoring
+      run: |
+        go mod vendor
+    - name: golangci-lint
+      uses: golangci/golangci-lint-action@v2 # their action caches go modules and other stuff
+      with:
+        version: v1.31
+

@@ -1,0 +1,65 @@
+name: auto-merge
+on:
+  pull_request_target:
+    types:
+      - labeled
+      - unlabeled
+      - synchronize
+      - opened
+      - edited
+      - ready_for_review
+      - reopened
+      - unlocked
+  pull_request_review:
+    types:
+      - submitted
+  check_suite:
+    types:
+      - completed
+  status: {}
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.16.11'
+        id: go
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request_target.head.ref }}
+          repository: ${{ github.event.pull_request_target.head.repo.full_name }}
+          #token: ${{ secrets.CONCOURSE_METRIX_GH_TOKEN }}
+          token: ${{ secrets.TEMPORARY_TOKEN }}
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: gomod
+        run: |
+          go mod tidy
+          go mod vendor
+          echo "Vendored Go modules"
+      - name: push
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "No changes to commit"
+          else
+            git config --global user.name "Log Store Bot"
+            git config --global user.email "log-store@pivotal.io"
+            git add -A
+            git commit -m "Updating vendored dependencies"
+            git push
+          fi
+      - name: auto-merge
+        uses: "pascalgn/automerge-action@v0.13.1"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          MERGE_LABELS: auto-merge
+          MERGE_METHOD: squash
+          MERGE_DELETE_BRANCH: true
+          MERGE_RETRIES: 60
+          MERGE_RETRY_SLEEP: 10000
