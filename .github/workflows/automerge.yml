@@ -26,11 +26,6 @@ jobs:
           go-version: '1.16.11'
         id: go
       - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-          ref: ${{ github.event.pull_request_target.head.ref }}
-          repository: ${{ github.event.pull_request_target.head.repo.full_name }}
-          token: ${{ secrets.TEMPORARY_TOKEN_HOVO }}
       - uses: actions/cache@v2
         with:
           path: ~/go/pkg/mod
@@ -39,7 +34,7 @@ jobs:
             ${{ runner.os }}-go-
       - name: gomod
         run: |
-          echo "Vendored Go modules"
+          echo "Vendored Go modules aaaa"
       - name: push
         run: |
           if [ -z "$(git status --porcelain)" ]; then
