@@ -26,10 +26,6 @@ jobs:
           go-version: '1.16.11'
         id: go
       - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-          ref: "git@github.com:hmanukyanVMw/ci-task-test.git"
-          repository: "master"
       - uses: actions/cache@v2
         with:
           path: ~/go/pkg/mod
