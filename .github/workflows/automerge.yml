@@ -31,7 +31,7 @@ jobs:
           ref: ${{ github.event.pull_request_target.head.ref }}
           repository: ${{ github.event.pull_request_target.head.repo.full_name }}
           #token: ${{ secrets.CONCOURSE_METRIX_GH_TOKEN }}
-          token: ${{ secrets.TEMPORARY_TOKEN }}
+          #token: ${{ secrets.TEMPORARY_TOKEN }}
       - uses: actions/cache@v2
         with:
           path: ~/go/pkg/mod
@@ -40,16 +40,14 @@ jobs:
             ${{ runner.os }}-go-
       - name: gomod
         run: |
-          go mod tidy
-          go mod vendor
           echo "Vendored Go modules"
       - name: push
         run: |
           if [ -z "$(git status --porcelain)" ]; then
             echo "No changes to commit"
           else
-            git config --global user.name "Log Store Bot"
-            git config --global user.email "log-store@pivotal.io"
+            git config --global user.name "Ci-task-test Store Bot"
+            git config --global user.email "Ci-test-task@pivotal.io"
             git add -A
             git commit -m "Updating vendored dependencies"
             git push
