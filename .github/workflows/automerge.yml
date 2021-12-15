@@ -40,7 +40,7 @@ jobs:
             ${{ runner.os }}-go-
       - name: gomod
         run: |
-          echo "Vendored Go modules"
+          echo "Vendored Go modules ci-test-task"
       - name: push
         run: |
           if [ -z "$(git status --porcelain)" ]; then
