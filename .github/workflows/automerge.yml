@@ -30,6 +30,7 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request_target.head.ref }}
           repository: ${{ github.event.pull_request_target.head.repo.full_name }}
+          #token: ${{ secrets.CONCOURSE_METRIX_GH_TOKEN }}
           token: ${{ secrets.TEMPORARY_TOKEN_HOVO }}
       - uses: actions/cache@v2
         with:
