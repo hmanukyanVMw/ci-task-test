@@ -30,8 +30,7 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request_target.head.ref }}
           repository: ${{ github.event.pull_request_target.head.repo.full_name }}
-          #token: ${{ secrets.CONCOURSE_METRIX_GH_TOKEN }}
-          token: ${{ secrets.TEMPORARY_TOKEN_HOVO }}
+          token: ${{ secrets.TEMPORARY_TOKEN_WITHOUT_HOVO_TOKEN }}
       - uses: actions/cache@v2
         with:
           path: ~/go/pkg/mod
@@ -40,7 +39,7 @@ jobs:
             ${{ runner.os }}-go-
       - name: gomod
         run: |
-          echo "Vendored Go modules ci-test-task"
+          echo "Vendored Go modules aaaa"
       - name: push
         run: |
           if [ -z "$(git status --porcelain)" ]; then
